@@ -54,7 +54,7 @@ const BridgeForm = () => {
       console.log(gasInfo);
       setSuccess(true);
       setLoading(false);
-      setMessage("This is the gas price you will spend in gwei");
+      setMessage("You can click again to check gas price");
       alert(JSON.stringify(gasInfo, null, 2));
       return gasInfo;
     } catch (error) {

@@ -34,7 +34,7 @@ async function start(amount, destinationChain, destinationAddress, symbol) {
       .approve(spender, amount)
       .send({ from: destinationAddress });
   console.log(await approveERC20);
-  const tx = contract.methods.sendToken(
+  const tx = contract.sendToken(
     destinationChain,
     destinationAddress,
     symbol,
