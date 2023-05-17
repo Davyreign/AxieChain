@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { start } from "../../hardhat/scripts/wrapper";
-import { AxelarQueryAPI, Environment } from "@axelar-network/axelarjs-sdk";
+import {
+  AxelarQueryAPI,
+  Environment,
+  AxelarAssetTransfer,
+} from "@axelar-network/axelarjs-sdk";
 import Alert from "../components/Alert";
+import { useAccount, useDisconnect } from "wagmi";
 
 const api = new AxelarQueryAPI({
+  environment: Environment.TESTNET,
+});
+
+const transferApi = new AxelarAssetTransfer({
   environment: Environment.TESTNET,
 });
 
@@ -23,6 +32,9 @@ const BridgeForm = () => {
   const [success, setSuccess] = useState<boolean | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean | null>(null);
+
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
 
   useEffect(() => {
     const fetchChains = async () => {
@@ -65,7 +77,7 @@ const BridgeForm = () => {
   const handleBridge = async () => {
     try {
       try {
-        let txn = await start(amount);
+        let txn = await start(amount, fromCurrency, address, "BNB");
         setBridgeLoading(true);
         console.log("Loading...", txn.hash);
         await txn.wait();
