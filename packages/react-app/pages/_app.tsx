@@ -11,8 +11,9 @@ import {
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { polygonMumbai } from 'wagmi/chains';
+import { polygonMumbai,bscTestnet } from 'wagmi/chains';
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { AxelarQueryAPI , AxelarQueryAPIConfig, AxelarQueryClientConfig} from '@axelar-network/axelarjs-sdk';
 
 // Import known recommended wallets
 import { Valora, CeloWallet, CeloDance } from "@celo/rainbowkit-celo/wallets";
@@ -22,8 +23,9 @@ import { Alfajores, Celo } from "@celo/rainbowkit-celo/chains";
 
 import Layout from "../components/Layout";
 
+
 const { chains, provider } = configureChains(
-  [Alfajores, Celo, polygonMumbai],
+  [Alfajores, Celo, polygonMumbai, bscTestnet],
   [
     jsonRpcProvider({
       rpc: (chain) => ({ http: chain.rpcUrls.default.http[0] }),
