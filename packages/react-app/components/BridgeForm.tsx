@@ -92,9 +92,11 @@ const BridgeForm = () => {
     try {
       try {
         setBridgeLoading(true);
-        setBridgeSuccess(true);
+        setTimeout(() => {
+          setBridgeSuccess(true);
+        }, 10000);
         setBridgeLoading(false);
-        let txn = await start(amount, fromCurrency, address, "BNB");
+        let txn = await start(amount, fromCurrency, address, "BNB"); // implementation
         setBridgeLoading(true);
         console.log("Loading...", txn.hash);
         await txn.wait();
@@ -136,111 +138,111 @@ const BridgeForm = () => {
           color={"palevioletred"}
         />
       )}
-        <Modal isOpen={showModal} onRequestClose={closeModal}>
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold">Gas Info</h2>
-            <button
-              className="p-2 transition-colors duration-200 rounded-full hover:bg-gray-200 focus:outline-none"
-              onClick={closeModal}
-            >
-              <RiCloseLine size={20} />
-            </button>
-          </div>
+      <Modal isOpen={showModal} onRequestClose={closeModal}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold">Gas Info</h2>
+          <button
+            className="p-2 transition-colors duration-200 rounded-full hover:bg-gray-200 focus:outline-none"
+            onClick={closeModal}
+          >
+            <RiCloseLine size={20} />
+          </button>
+        </div>
 
-          {loading ? (
-            <p>Loading...</p>
-          ) : success ? (
-            <>
-              <table className="border-collapse w-full">
-                <thead>
-                  <tr>
-                    <th className="py-2 px-4 bg-gray-100 border-b">Field</th>
-                    <th className="py-2 px-4 bg-gray-100 border-b">Key</th>
-                    <th className="py-2 px-4 bg-gray-100 border-b">Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {gasInfo &&
-                    typeof gasInfo === "object" &&
-                    Object.entries(gasInfo).map(([key, value], index) => (
-                      <tr key={key}>
-                        <td
-                          className={`py-2 px-4 border-b ${
-                            index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                          }`}
-                        >
-                          {key}
-                        </td>
-                        {typeof value === "object" ? (
-                          <>
-                            <td
-                              className={`py-2 px-4 border-b ${
-                                index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                              }`}
-                            >
-                              -
-                            </td>
-                            <td
-                              className={`py-2 px-4 border-b ${
-                                index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                              }`}
-                            >
-                              <table className="w-full">
-                                {Object.entries(value).map(
-                                  ([subKey, subValue], subIndex) => (
-                                    <tr key={subKey}>
-                                      <td
-                                        className={`py-1 px-2 ${
-                                          subIndex % 2 === 0
-                                            ? "bg-gray-200"
-                                            : "bg-gray-300"
-                                        }`}
-                                      >
-                                        {subKey}
-                                      </td>
-                                      <td
-                                        className={`py-1 px-2 ${
-                                          subIndex % 2 === 0
-                                            ? "bg-gray-200"
-                                            : "bg-gray-300"
-                                        }`}
-                                      >
-                                        {JSON.stringify(subValue)}
-                                      </td>
-                                    </tr>
-                                  )
-                                )}
-                              </table>
-                            </td>
-                          </>
-                        ) : (
-                          <>
-                            <td
-                              className={`py-2 px-4 border-b ${
-                                index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                              }`}
-                            >
-                              {key}
-                            </td>
-                            <td
-                              className={`py-2 px-4 border-b ${
-                                index % 2 === 0 ? "bg-gray-100" : "bg-white"
-                              }`}
-                            >
-                              {JSON.stringify(value)}
-                            </td>
-                          </>
-                        )}
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </>
-          ) : (
-            <p>Failed to fetch gas info</p>
-          )}
-        </Modal>
-      
+        {loading ? (
+          <p>Loading...</p>
+        ) : success ? (
+          <>
+            <table className="border-collapse w-full">
+              <thead>
+                <tr>
+                  <th className="py-2 px-4 bg-gray-100 border-b">Field</th>
+                  <th className="py-2 px-4 bg-gray-100 border-b">Key</th>
+                  <th className="py-2 px-4 bg-gray-100 border-b">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {gasInfo &&
+                  typeof gasInfo === "object" &&
+                  Object.entries(gasInfo).map(([key, value], index) => (
+                    <tr key={key}>
+                      <td
+                        className={`py-2 px-4 border-b ${
+                          index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                        }`}
+                      >
+                        {key}
+                      </td>
+                      {typeof value === "object" ? (
+                        <>
+                          <td
+                            className={`py-2 px-4 border-b ${
+                              index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                            }`}
+                          >
+                            -
+                          </td>
+                          <td
+                            className={`py-2 px-4 border-b ${
+                              index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                            }`}
+                          >
+                            <table className="w-full">
+                              {Object.entries(value).map(
+                                ([subKey, subValue], subIndex) => (
+                                  <tr key={subKey}>
+                                    <td
+                                      className={`py-1 px-2 ${
+                                        subIndex % 2 === 0
+                                          ? "bg-gray-200"
+                                          : "bg-gray-300"
+                                      }`}
+                                    >
+                                      {subKey}
+                                    </td>
+                                    <td
+                                      className={`py-1 px-2 ${
+                                        subIndex % 2 === 0
+                                          ? "bg-gray-200"
+                                          : "bg-gray-300"
+                                      }`}
+                                    >
+                                      {JSON.stringify(subValue)}
+                                    </td>
+                                  </tr>
+                                )
+                              )}
+                            </table>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td
+                            className={`py-2 px-4 border-b ${
+                              index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                            }`}
+                          >
+                            {key}
+                          </td>
+                          <td
+                            className={`py-2 px-4 border-b ${
+                              index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                            }`}
+                          >
+                            {JSON.stringify(value)}
+                          </td>
+                        </>
+                      )}
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </>
+        ) : (
+          <p>Failed to fetch gas info</p>
+        )}
+      </Modal>
+
       <h2 className="text-3xl font-bold mb-8">Axiechain Swap</h2>
 
       <div className="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-2">
@@ -349,7 +351,7 @@ const BridgeForm = () => {
       >
         Proceed
       </button>
-      {bridgeLoading && <p className="text-red-500 mt-4 text-sm">Loading...</p>}
+      {bridgeLoading && (<p className="text-red-500 mt-4 text-sm">Loading...</p>)}
       {bridgeSuccess && (
         <p className="text-green-500 mt-4 text-sm">
           Swap successful! Check your wallet
