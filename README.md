@@ -10,3 +10,7 @@ Clone this repo and run
 ```
 npm run dev
 ```
+
+
+https://github.com/Davyreign/AxieChain/assets/101694913/b9c4d415-21d8-4acf-bb80-95e520460ae6
+
