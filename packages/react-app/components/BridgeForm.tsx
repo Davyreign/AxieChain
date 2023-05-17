@@ -8,6 +8,8 @@ import {
 } from "@axelar-network/axelarjs-sdk";
 import Alert from "../components/Alert";
 import { useAccount, useDisconnect } from "wagmi";
+import Modal from "react-modal";
+import { RiCloseLine } from "react-icons/ri";
 
 const api = new AxelarQueryAPI({
   environment: Environment.TESTNET,
@@ -36,6 +38,9 @@ const BridgeForm = () => {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
 
+  const [showModal, setShowModal] = useState(false);
+  const [gasInfo, setGasInfo] = useState(null);
+
   useEffect(() => {
     const fetchChains = async () => {
       const activeChains = await api.getActiveChains();
@@ -45,6 +50,14 @@ const BridgeForm = () => {
     fetchChains();
   }, []);
 
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   const compareGasPrices = async () => {
     try {
       const gasInfo = await api.getGasInfo(fromCurrency, toCurrency, "BNB");
@@ -52,10 +65,11 @@ const BridgeForm = () => {
       console.log(fromCurrency);
       console.log(toCurrency);
       console.log(gasInfo);
+      setGasInfo(gasInfo);
       setSuccess(true);
       setLoading(false);
       setMessage("You can click again to check gas price");
-      alert(JSON.stringify(gasInfo, null, 2));
+      setShowModal(true);
       return gasInfo;
     } catch (error) {
       console.error("Failed to compare gas prices:", error);
@@ -119,6 +133,111 @@ const BridgeForm = () => {
           color={"palevioletred"}
         />
       )}
+        <Modal isOpen={showModal} onRequestClose={closeModal}>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold">Gas Info</h2>
+            <button
+              className="p-2 transition-colors duration-200 rounded-full hover:bg-gray-200 focus:outline-none"
+              onClick={closeModal}
+            >
+              <RiCloseLine size={20} />
+            </button>
+          </div>
+
+          {loading ? (
+            <p>Loading...</p>
+          ) : success ? (
+            <>
+              <table className="border-collapse w-full">
+                <thead>
+                  <tr>
+                    <th className="py-2 px-4 bg-gray-100 border-b">Field</th>
+                    <th className="py-2 px-4 bg-gray-100 border-b">Key</th>
+                    <th className="py-2 px-4 bg-gray-100 border-b">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gasInfo &&
+                    typeof gasInfo === "object" &&
+                    Object.entries(gasInfo).map(([key, value], index) => (
+                      <tr key={key}>
+                        <td
+                          className={`py-2 px-4 border-b ${
+                            index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                          }`}
+                        >
+                          {key}
+                        </td>
+                        {typeof value === "object" ? (
+                          <>
+                            <td
+                              className={`py-2 px-4 border-b ${
+                                index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                              }`}
+                            >
+                              -
+                            </td>
+                            <td
+                              className={`py-2 px-4 border-b ${
+                                index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                              }`}
+                            >
+                              <table className="w-full">
+                                {Object.entries(value).map(
+                                  ([subKey, subValue], subIndex) => (
+                                    <tr key={subKey}>
+                                      <td
+                                        className={`py-1 px-2 ${
+                                          subIndex % 2 === 0
+                                            ? "bg-gray-200"
+                                            : "bg-gray-300"
+                                        }`}
+                                      >
+                                        {subKey}
+                                      </td>
+                                      <td
+                                        className={`py-1 px-2 ${
+                                          subIndex % 2 === 0
+                                            ? "bg-gray-200"
+                                            : "bg-gray-300"
+                                        }`}
+                                      >
+                                        {JSON.stringify(subValue)}
+                                      </td>
+                                    </tr>
+                                  )
+                                )}
+                              </table>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td
+                              className={`py-2 px-4 border-b ${
+                                index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                              }`}
+                            >
+                              {key}
+                            </td>
+                            <td
+                              className={`py-2 px-4 border-b ${
+                                index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                              }`}
+                            >
+                              {JSON.stringify(value)}
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </>
+          ) : (
+            <p>Failed to fetch gas info</p>
+          )}
+        </Modal>
+      
       <h2 className="text-3xl font-bold mb-8">Axiechain Swap</h2>
 
       <div className="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-2">
@@ -173,7 +292,6 @@ const BridgeForm = () => {
         </div>
       </div>
 
-    
       <div className="mb-8 flex">
         <div className="mr-2">
           <label htmlFor="sendAmount" className="text-sm font-medium">
@@ -219,7 +337,7 @@ const BridgeForm = () => {
         onClick={compareGasPrices}
         className="w-full py-3 px-6 rounded-md text-base font-medium text-white bg-gradient-to-br from-blue-500 to-purple-500 hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600"
       >
-        Check Gas Price First
+        Check Gas Info First
       </button>
       <button
         type="button"
@@ -231,7 +349,7 @@ const BridgeForm = () => {
       {bridgeLoading && <p className="text-red-500 mt-4 text-sm">Loading...</p>}
       {bridgeSuccess && (
         <p className="text-green-500 mt-4 text-sm">
-          Bridging successful! Check your Alfajores wallet
+          Bridging successful! Check your wallet
         </p>
       )}
       {bridgeError && (
