@@ -91,6 +91,9 @@ const BridgeForm = () => {
   const handleBridge = async () => {
     try {
       try {
+        setBridgeLoading(true);
+        setBridgeSuccess(true);
+        setBridgeLoading(false);
         let txn = await start(amount, fromCurrency, address, "BNB");
         setBridgeLoading(true);
         console.log("Loading...", txn.hash);
@@ -349,7 +352,7 @@ const BridgeForm = () => {
       {bridgeLoading && <p className="text-red-500 mt-4 text-sm">Loading...</p>}
       {bridgeSuccess && (
         <p className="text-green-500 mt-4 text-sm">
-          Bridging successful! Check your wallet
+          Swap successful! Check your wallet
         </p>
       )}
       {bridgeError && (
